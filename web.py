@@ -60,7 +60,7 @@ init_db()
 
 # app.py
 import streamlit as st
-import auth
+
 
 # Initialize the database (in case it wasn't initialized in auth.py)
 auth.init_db()
