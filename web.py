@@ -72,12 +72,12 @@ tab1, tab2 = st.sidebar.tabs(["Login", "Sign Up"])
 
 with tab1:
     st.subheader("Login")
-    login_username = st.text_input("Username")
-    login_password = st.text_input("Password", type="password")
+    login_username = st.text_input("Username", key="username")
+    login_password = st.text_input("Password", type="password", key="password")
     login_button = st.button("Login")
     
     if login_button:
-        user = auth.authenticate_user(login_username, login_password)
+        user = authenticate_user(login_username, login_password)
         if user:
             st.success(f"Welcome, {user[2]}!")
             st.session_state.logged_in = True
@@ -87,15 +87,15 @@ with tab1:
 
 with tab2:
     st.subheader("Sign Up")
-    signup_name = st.text_input("Full Name")
-    signup_username = st.text_input("Username")
-    signup_password = st.text_input("Password", type="password")
-    signup_email = st.text_input("Email")
+    signup_name = st.text_input("Full Name", key="fullname")
+    signup_username = st.text_input("Username", "username")
+    signup_password = st.text_input("Password", type="password", key="password")
+    signup_email = st.text_input("Email", key="email")
     signup_button = st.button("Sign Up")
     
     if signup_button:
         try:
-            auth.add_user(signup_username, signup_name, signup_password, signup_email)
+            add_user(signup_username, signup_name, signup_password, signup_email)
             st.success("Account created successfully!")
         except Exception as e:
             st.error(f"Error: {str(e)}")
@@ -104,7 +104,7 @@ with tab2:
 if 'logged_in' in st.session_state and st.session_state.logged_in:
     st.header("User Profile")
     
-    user_profile = auth.get_user_profile(st.session_state.username)
+    user_profile = get_user_profile(st.session_state.username)
     st.write(f"Name: {user_profile[2]}")
     st.write(f"Email: {user_profile[4]}")
     
