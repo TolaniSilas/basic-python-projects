@@ -62,9 +62,6 @@ init_db()
 import streamlit as st
 
 
-# Initialize the database (in case it wasn't initialized in auth.py)
-auth.init_db()
-
 st.title("Diabetic Retinopathy Detection")
 
 # Sidebar for user authentication
