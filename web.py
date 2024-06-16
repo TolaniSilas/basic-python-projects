@@ -45,10 +45,10 @@ create_usertable()
 st.title("Diabetic Retinopathy Prediction")
 
 def login_tab():
-    st.sidebar.subheader("Login Section")
-    username = st.sidebar.text_input("Username")
-    password = st.sidebar.text_input("Password", type='password')
-    if st.sidebar.button("Login"):
+    st.subheader("Login Section")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type='password')
+    if st.button("Login"):
         hashed_pswd = hash_password(password)
         result = login_user(username, hashed_pswd)
         if result:
@@ -90,10 +90,10 @@ def login_tab():
             st.warning("Incorrect Username/Password")
 
 def signup_tab():
-    st.sidebar.subheader("Create New Account")
-    new_user = st.sidebar.text_input("Username", key="username")
-    new_password = st.sidebar.text_input("Password", type='password', key="password")
-    if st.sidebar.button("SignUp"):
+    st.subheader("Create New Account")
+    new_user = st.text_input("Username", key="username")
+    new_password = st.text_input("Password", type='password', key="password")
+    if st.button("SignUp"):
         create_usertable()
         hashed_new_password = hash_password(new_password)
         add_userdata(new_user, hashed_new_password)
