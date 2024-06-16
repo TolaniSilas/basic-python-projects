@@ -91,8 +91,8 @@ def login_tab():
 
 def signup_tab():
     st.sidebar.subheader("Create New Account")
-    new_user = st.sidebar.text_input("Username")
-    new_password = st.sidebar.text_input("Password", type='password')
+    new_user = st.sidebar.text_input("Username", key="username")
+    new_password = st.sidebar.text_input("Password", type='password', key="password")
     if st.sidebar.button("SignUp"):
         create_usertable()
         hashed_new_password = hash_password(new_password)
