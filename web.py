@@ -1,108 +1,117 @@
+# auth.py
 import streamlit as st
+import streamlit_authenticator as stauth
 import sqlite3
 import hashlib
-import numpy as np
-import pandas as pd
-from PIL import Image
-import time
 
-# Database functions
-def create_usertable():
-    conn = sqlite3.connect('data.db')
-    c = conn.cursor()
-    c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT, password TEXT)')
-    conn.commit()
-    conn.close()
-
-def add_userdata(username, password):
-    conn = sqlite3.connect('data.db')
-    c = conn.cursor()
-    c.execute(f"INSERT INTO userstable(username, password) VALUES ('{username}', '{password}')")
-    conn.commit()
-    conn.close()
-
-def login_user(username, password):
-    conn = sqlite3.connect('data.db')
-    c = conn.cursor()
-    c.execute('SELECT * FROM userstable WHERE username =? AND password =?', (username, password))
-    data = c.fetchall()
-    conn.close()
-    return data
-
+# Hash password
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Simulated prediction function (Replace with actual model prediction)
-def predict_diabetic_retinopathy(image):
-    prediction = np.random.choice([0, 1])  # 0 for No DR, 1 for DR
-    confidence_score = np.random.rand()  # Random confidence score for demo purposes
-    return prediction, confidence_score
+# Create database connection
+def get_db_connection():
+    conn = sqlite3.connect('users.db')
+    return conn
 
-# Set up the database
-create_usertable()
+# Initialize database
+def init_db():
+    conn = get_db_connection()
+    with conn:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                username TEXT UNIQUE,
+                name TEXT,
+                hashed_password TEXT,
+                email TEXT,
+                health_data TEXT
+            )
+        ''')
+    conn.close()
 
-# Streamlit application
-st.title("Diabetic Retinopathy Prediction")
+# Add user
+def add_user(username, name, password, email):
+    conn = get_db_connection()
+    hashed_password = hash_password(password)
+    with conn:
+        conn.execute('INSERT INTO users (username, name, hashed_password, email) VALUES (?, ?, ?, ?)',
+                     (username, name, hashed_password, email))
+    conn.close()
 
-def login_tab():
-    st.subheader("Login Section")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type='password')
-    if st.button("Login"):
-        hashed_pswd = hash_password(password)
-        result = login_user(username, hashed_pswd)
-        if result:
-            st.session_state['authenticated'] = True
-            st.success(f"Logged in as {username}")
+# Authenticate user
+def authenticate_user(username, password):
+    conn = get_db_connection()
+    hashed_password = hash_password(password)
+    user = conn.execute('SELECT * FROM users WHERE username = ? AND hashed_password = ?', (username, hashed_password)).fetchone()
+    conn.close()
+    return user
 
-            # Main app content
-            st.write("""
-            ## Upload patient images
-            (Note: In practice, these would be actual clinical images)
-            """)
+# Get user profile
+def get_user_profile(username):
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+    conn.close()
+    return user
 
-            # Allow multiple file uploads
-            uploaded_files = st.file_uploader("Choose images", accept_multiple_files=True, type=["jpg", "jpeg", "png"])
+# Initialize the database
+init_db()
 
-            if uploaded_files:
-                if st.button('Identify Diagnosis'):
-                    progress_bar = st.progress(0)
-                    total_files = len(uploaded_files)
-                    for i, uploaded_file in enumerate(uploaded_files):
-                        image = Image.open(uploaded_file)
-                        st.image(image, caption=f'Uploaded Image: {uploaded_file.name}', use_column_width=True)
-                        input_data = np.random.rand(1, 5)
-                        prediction, confidence_score = predict_diabetic_retinopathy(input_data)
-                        rounded_confidence_score = round(confidence_score, 4)
-                        confidence_scores = [round((1 - confidence_score), 4), rounded_confidence_score]
-                        binary_class = ["No DR", "DR"]
-                        st.write(f"### Confidence Scores for {uploaded_file.name}")
-                        st.bar_chart(pd.DataFrame({"Confidence Score": confidence_scores}, index=binary_class))
-                        if prediction == 1:
-                            st.success(f"The model predicts Diabetic Retinopathy for {uploaded_file.name} with a confidence score of {rounded_confidence_score:.4f}.")
-                        else:
-                            st.success(f"The model predicts No Diabetic Retinopathy for {uploaded_file.name} with a confidence score of {rounded_confidence_score:.4f}.")
-                        progress = (i + 1) / total_files
-                        progress_bar.progress(progress)
-                        time.sleep(0.1)
-                    st.success("Processing complete!")
-        else:
-            st.warning("Incorrect Username/Password")
 
-def signup_tab():
-    st.subheader("Create New Account")
-    new_user = st.text_input("Username", key="username")
-    new_password = st.text_input("Password", type='password', key="password")
-    if st.button("SignUp"):
-        create_usertable()
-        hashed_new_password = hash_password(new_password)
-        add_userdata(new_user, hashed_new_password)
-        st.success("You have successfully created an account")
-        st.info("Go to Login Tab to login")
 
-tab1, tab2 = st.sidebar.tabs(["Login", "SignUp"])
+# app.py
+import streamlit as st
+import auth
+
+# Initialize the database (in case it wasn't initialized in auth.py)
+auth.init_db()
+
+st.title("Diabetic Retinopathy Detection")
+
+# Sidebar for user authentication
+st.sidebar.title("User Authentication")
+
+# Tabs for login and signup
+tab1, tab2 = st.sidebar.tabs(["Login", "Sign Up"])
+
 with tab1:
-    login_tab()
-with tab2:
-    signup_tab()
+    st.subheader("Login")
+    login_username = st.text_input("Username")
+    login_password = st.text_input("Password", type="password")
+    login_button = st.button("Login")
+    
+    if login_button:
+        user = auth.authenticate_user(login_username, login_password)
+        if user:
+            st.success(f"Welcome, {user[2]}!")
+            st.session_state.logged_in = True
+            st.session_state.username = user[1]
+        else:
+            st.error("Invalid username or password")
 
+with tab2:
+    st.subheader("Sign Up")
+    signup_name = st.text_input("Full Name")
+    signup_username = st.text_input("Username")
+    signup_password = st.text_input("Password", type="password")
+    signup_email = st.text_input("Email")
+    signup_button = st.button("Sign Up")
+    
+    if signup_button:
+        try:
+            auth.add_user(signup_username, signup_name, signup_password, signup_email)
+            st.success("Account created successfully!")
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+
+# Main content
+if 'logged_in' in st.session_state and st.session_state.logged_in:
+    st.header("User Profile")
+    
+    user_profile = auth.get_user_profile(st.session_state.username)
+    st.write(f"Name: {user_profile[2]}")
+    st.write(f"Email: {user_profile[4]}")
+    
+    # Placeholder for health data management
+    st.write("Manage your health data here...")
+else:
+    st.write("Please login or sign up to access the application.")
