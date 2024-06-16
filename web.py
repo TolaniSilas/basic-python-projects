@@ -57,9 +57,11 @@ def get_user_profile(username):
 init_db()
 
 
-
-# app.py
-import streamlit as st
+# Initialize session state variables
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+if 'username' not in st.session_state:
+    st.session_state.username = ""
 
 
 st.title("Diabetic Retinopathy Detection")
