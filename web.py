@@ -100,7 +100,7 @@ def signup_tab():
         st.success("You have successfully created an account")
         st.info("Go to Login Tab to login")
 
-tab1, tab2 = st.tabs(["Login", "SignUp"])
+tab1, tab2 = st.sidebar.tabs(["Login", "SignUp"])
 with tab1:
     login_tab()
 with tab2:
