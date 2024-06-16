@@ -100,10 +100,9 @@ def signup_tab():
         st.success("You have successfully created an account")
         st.info("Go to Login Tab to login")
 
-tabs = st.sidebar.tabs(["Login", "SignUp"])
-if tabs:
-    if tabs[0] == "Login":
-        login_tab()
-    elif tabs[0] == "SignUp":
-        signup_tab()
+tab1, tab2 = st.sidebar.tabs(["Login", "SignUp"])
+with tab1:
+    login_tab()
+with tab2:
+    signup_tab()
 
