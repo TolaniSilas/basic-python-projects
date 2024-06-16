@@ -73,7 +73,7 @@ tab1, tab2 = st.sidebar.tabs(["Login", "Sign Up"])
 with tab1:
     st.subheader("Login")
     login_username = st.text_input("Username", key="username")
-    login_password = st.text_input("Password", type="password", key="password")
+    login_password = st.text_input("Password", type="password", key="login_password")
     login_button = st.button("Login")
     
     if login_button:
