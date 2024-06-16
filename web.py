@@ -17,7 +17,7 @@ def create_usertable():
 def add_userdata(username, password):
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
-    c.execute('INSERT INTO userstable(username, password) VALUES (username, password))
+    c.execute(f"INSERT INTO userstable(username, password) VALUES ('{username}', '{password}')")
     conn.commit()
     conn.close()
 
