@@ -1,4 +1,4 @@
-
+# Define the Users Class.
 class Users:
     """A class to model a user profile.
     
@@ -33,6 +33,7 @@ class Users:
               ", it's great to have you here!")
 
 
+# Define the Privileges Class.
 class Privileges:
     """A class to represent privileges for an admin user.
     
@@ -56,6 +57,7 @@ class Privileges:
             print("\t- " + privilege)
 
 
+# Define the Admin Class.
 class Admin(Users):
     """A class to represent an administrator, inheriting from the Users class.
     
@@ -79,7 +81,9 @@ class Admin(Users):
         print("The Admin " + "(" + self.first_name.title() + " " + self.last_name.title() + ")" + " is entitled to the following privileges: ")
         self.privileges.show_privileges()
 
-# Create an instance.
+
+
+# Create an instance of the Admin class.
 administrator = Admin("osunba", "silas", "M")
 administrator.describe_user()          
 administrator.greet_user()
