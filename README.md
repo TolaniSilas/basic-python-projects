@@ -23,7 +23,7 @@ Behold! The emergence of classes and objects marked a pivotal turn in my odyssey
 In the labyrinthine depths of **file systems**, I wielded Python's file-handling magic. From reading ancient texts to writing futuristic logs, **open()** and **close()** became my incantations, summoning data from the depths of directories.
 
 ### Chapter 7: Dreaming of AI Horizons
-And now, dear reader, I stand at the precipice of a grand adventure: Artificial Intelligence and Machine Learning. With Python as my trusty steed, I dream of algorithms that predict the future, neural networks that mimic the brain, and data that whispers secrets **Python** can interpret.
+And now, dear reader, I stand at the precipice of a grand adventure: **Artificial Intelligence** and **Machine Learning**. With Python as my trusty steed, I dream of algorithms that predict the future, neural networks that mimic the brain, and data that whispers secrets **Python** can interpret.
 
 ## Acknowledgments and Gratitude 🙏
 To Python, the language that opened doors to worlds unknown. To Stack Overflow, the oracle of infinite wisdom. To my IDE, the faithful scribe of my Pythonic adventures. And to you, dear reader, may your Pythonic journey be as joyous and enlightening as mine.
